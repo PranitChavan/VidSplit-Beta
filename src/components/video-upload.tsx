@@ -7,7 +7,7 @@ import { useRef, useState } from 'react';
 import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/lib/utils';
 import { toast } from 'sonner';
 import { InfoIcon, PlusIcon } from 'lucide-react';
-import TooltipInfo from './tooltip-info';
+import PopoverInfo from './popover-info';
 
 export default function VideoUpload() {
   const [file, setFile] = useState<File | undefined>(undefined);
@@ -59,7 +59,7 @@ export default function VideoUpload() {
         <CardHeader>
           <div className="flex flex-row gap-2 items-center">
             <CardTitle>Options</CardTitle>
-            <TooltipInfo />
+            <PopoverInfo message="Below options are decided by the duration of the uploaded video." icon={InfoIcon} size={20} />
           </div>
           <CardDescription>Select options in which you want to split your video.</CardDescription>
         </CardHeader>
