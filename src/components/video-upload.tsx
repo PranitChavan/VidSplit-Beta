@@ -4,14 +4,15 @@ import Options from './options';
 import { Separator } from './ui/separator';
 import { Button } from './ui/button';
 import { useRef, useState } from 'react';
-import { isVideoValid } from '@/lib/utils';
+import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/lib/utils';
 import { toast } from 'sonner';
 
 export default function VideoUpload() {
   const [file, setFile] = useState<File | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
+  const splitChunkMap = useRef<Map<Number, Number>>();
 
-  const handleFile = function (e: React.ChangeEvent<HTMLInputElement>): void {
+  const handleFile = async function (e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     let videoFile: File | undefined = e.target.files?.[0];
 
     if (!videoFile) {
@@ -26,6 +27,9 @@ export default function VideoUpload() {
     }
 
     if (isVideoValid(videoFile, inputRef)) {
+      const videoDuration = await getVideoDuration(videoFile);
+      const chunksMap = calcSplittingOptionsBasedOnVideoDuration(videoDuration);
+      splitChunkMap.current = chunksMap;
       setFile(videoFile);
     }
   };
@@ -58,7 +62,7 @@ export default function VideoUpload() {
         <Separator />
 
         <CardContent className="pt-8">
-          <Options />
+          <Options splitOptions={splitChunkMap.current} />
           <Button className="mt-8 w-full md:w-auto">Submit</Button>
         </CardContent>
 
