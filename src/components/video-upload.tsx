@@ -6,11 +6,13 @@ import { Button } from './ui/button';
 import { useRef, useState } from 'react';
 import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/lib/utils';
 import { toast } from 'sonner';
+import { InfoIcon, PlusIcon } from 'lucide-react';
+import TooltipInfo from './tooltip-info';
 
 export default function VideoUpload() {
   const [file, setFile] = useState<File | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
-  const splitChunkMap = useRef<Map<Number, Number>>();
+  const splitChunkMap = useRef<Map<number, number>>();
 
   const handleFile = async function (e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     let videoFile: File | undefined = e.target.files?.[0];
@@ -35,7 +37,7 @@ export default function VideoUpload() {
   };
 
   return (
-    <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600">
+    <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md">
       <div className={file && 'hidden'}>
         <CardHeader>
           <CardTitle>Upload your video</CardTitle>
@@ -46,7 +48,7 @@ export default function VideoUpload() {
 
         <CardContent className="hover:bg-muted/50">
           <label className=" rounded-lg w-full h-60 flex items-center justify-center transition-colors cursor-pointer" htmlFor="video">
-            <PlusIcon className="w-6 h-6" />
+            <PlusIcon />
             <span className="text-sm text-gray-500 dark:text-gray-400">Click here to select your video file</span>
             <input aria-describedby="video-help" className="sr-only" id="video" type="file" accept="video/*" onChange={(e) => handleFile(e)} ref={inputRef} />
           </label>
@@ -55,7 +57,10 @@ export default function VideoUpload() {
 
       <div className={file ? undefined : 'hidden'}>
         <CardHeader>
-          <CardTitle>Options</CardTitle>
+          <div className="flex flex-row gap-2 items-center">
+            <CardTitle>Options</CardTitle>
+            <TooltipInfo />
+          </div>
           <CardDescription>Select options in which you want to split your video.</CardDescription>
         </CardHeader>
 
@@ -71,14 +76,5 @@ export default function VideoUpload() {
         <CardFooter>{file && <VideoStatusTable videoFile={file} />}</CardFooter>
       </div>
     </Card>
-  );
-}
-
-function PlusIcon(props: any) {
-  return (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M5 12h14" />
-      <path d="M12 5v14" />
-    </svg>
   );
 }

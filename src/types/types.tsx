@@ -3,5 +3,5 @@ export type VideoFileProps = {
 };
 
 export type OptionsProps = {
-  splitOptions: Map<Number, Number> | undefined;
+  splitOptions: Map<number, number> | undefined;
 };

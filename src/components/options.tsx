@@ -7,15 +7,20 @@ export default function Options(props: OptionsProps) {
 
   const splitOptionsArray = [...(splitOptions?.entries() || [])];
 
+  const filteredPossibleChunks = splitOptionsArray.filter((data) => {
+    const [_, chunk] = data;
+    return chunk > 0;
+  });
+
   return (
     <>
-      <RadioGroup defaultValue="option-one">
-        {splitOptionsArray.map((data, index) => {
+      <RadioGroup defaultValue="option-1" defaultChecked={true}>
+        {filteredPossibleChunks.map((data, index) => {
           const [split, chunk] = data;
           const optionNum = index + 1;
           return (
-            <div className={`flex items-center space-x-2 ${!chunk && 'hidden'}`} key={optionNum}>
-              <RadioGroupItem value={`option-${optionNum}`} id={`option-${optionNum}`} disabled={!Boolean(chunk)} />
+            <div className={'flex items-center space-x-2'} key={optionNum}>
+              <RadioGroupItem value={`option-${optionNum}`} id={`option-${optionNum}`} />
               <Label htmlFor={`option-${optionNum}`} className="text-lg">
                 {`${split} Secs (${chunk} splits approx) `}
               </Label>
@@ -23,9 +28,9 @@ export default function Options(props: OptionsProps) {
           );
         })}
         <div className="flex items-center space-x-2">
-          <RadioGroupItem value={`option-${splitOptionsArray.length + 1}`} id={`option-${splitOptionsArray.length + 1}`} />
-          <Label htmlFor={`option-${splitOptionsArray.length + 1}`} className="text-lg">
-            {`Custom`}
+          <RadioGroupItem value={`option-${filteredPossibleChunks.length + 1}`} id={`option-${filteredPossibleChunks.length + 1}`} />
+          <Label htmlFor={`option-${filteredPossibleChunks.length + 1}`} className="text-lg">
+            Custom
           </Label>
         </div>
       </RadioGroup>
