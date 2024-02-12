@@ -2,6 +2,7 @@ import { LucideIcon } from 'lucide-react';
 
 export type VideoFileProps = {
   videoFile: File;
+  videoDuration: number | undefined;
 };
 
 export type OptionsProps = {

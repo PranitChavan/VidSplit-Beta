@@ -13,6 +13,7 @@ export default function VideoUpload() {
   const [file, setFile] = useState<File | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
   const splitChunkMap = useRef<Map<number, number>>();
+  const videoDurationRef = useRef<number>();
 
   const handleFile = async function (e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     let videoFile: File | undefined = e.target.files?.[0];
@@ -30,6 +31,7 @@ export default function VideoUpload() {
 
     if (isVideoValid(videoFile, inputRef)) {
       const videoDuration = await getVideoDuration(videoFile);
+      videoDurationRef.current = videoDuration;
       const chunksMap = calcSplittingOptionsBasedOnVideoDuration(videoDuration);
       splitChunkMap.current = chunksMap;
       setFile(videoFile);
@@ -37,44 +39,47 @@ export default function VideoUpload() {
   };
 
   return (
-    <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md">
-      <div className={file && 'hidden'}>
-        <CardHeader>
-          <CardTitle>Upload your video</CardTitle>
-          <CardDescription>Click the button below to select your video file</CardDescription>
-        </CardHeader>
+    <>
+      {file ? (
+        <>
+          <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md">
+            <CardHeader>
+              <div className="flex flex-row gap-2 items-center">
+                <CardTitle>Options</CardTitle>
+                <PopoverInfo message="Below options are decided by the duration of the uploaded video." icon={InfoIcon} size={20} />
+              </div>
+              <CardDescription>Select options in which you want to split your video.</CardDescription>
+            </CardHeader>
 
-        <Separator />
+            <Separator />
 
-        <CardContent className="hover:bg-muted/50">
-          <label className=" rounded-lg w-full h-60 flex items-center justify-center transition-colors cursor-pointer" htmlFor="video">
-            <PlusIcon />
-            <span className="text-sm text-gray-500 dark:text-gray-400">Click here to select your video file</span>
-            <input aria-describedby="video-help" className="sr-only" id="video" type="file" accept="video/*" onChange={(e) => handleFile(e)} ref={inputRef} />
-          </label>
-        </CardContent>
-      </div>
+            <CardContent className="pt-8">
+              <Options splitOptions={splitChunkMap.current} />
+              <Button className="mt-8 w-full md:w-auto">Submit</Button>
+            </CardContent>
 
-      <div className={file ? undefined : 'hidden'}>
-        <CardHeader>
-          <div className="flex flex-row gap-2 items-center">
-            <CardTitle>Options</CardTitle>
-            <PopoverInfo message="Below options are decided by the duration of the uploaded video." icon={InfoIcon} size={20} />
-          </div>
-          <CardDescription>Select options in which you want to split your video.</CardDescription>
-        </CardHeader>
+            <Separator />
+          </Card>
+          {file && <VideoStatusTable videoFile={file} videoDuration={videoDurationRef.current} />}
+        </>
+      ) : (
+        <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md">
+          <CardHeader>
+            <CardTitle>Upload your video</CardTitle>
+            <CardDescription>Click the button below to select your video file</CardDescription>
+          </CardHeader>
 
-        <Separator />
+          <Separator />
 
-        <CardContent className="pt-8">
-          <Options splitOptions={splitChunkMap.current} />
-          <Button className="mt-8 w-full md:w-auto">Submit</Button>
-        </CardContent>
-
-        <Separator />
-
-        <CardFooter>{file && <VideoStatusTable videoFile={file} />}</CardFooter>
-      </div>
-    </Card>
+          <CardContent className="hover:bg-muted/50">
+            <label className=" rounded-lg w-full h-60 flex items-center justify-center transition-colors cursor-pointer" htmlFor="video">
+              <PlusIcon />
+              <span className="text-sm text-gray-500 dark:text-gray-400">Click here to select your video file</span>
+              <input aria-describedby="video-help" className="sr-only" id="video" type="file" accept="video/*" onChange={(e) => handleFile(e)} ref={inputRef} />
+            </label>
+          </CardContent>
+        </Card>
+      )}
+    </>
   );
 }
