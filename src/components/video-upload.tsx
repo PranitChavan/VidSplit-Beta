@@ -1,13 +1,14 @@
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import VideoStatusTable from './video-status-table';
-import Options from './options';
-import { Separator } from './ui/separator';
-import { Button } from './ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import VideoStatusTable from '@/components/video-status-table';
+import Options from '@/components/options';
+import { Separator } from '@/components/ui/separator';
+import { Button } from '@/components/ui/button';
 import { useRef, useState } from 'react';
 import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/lib/utils';
 import { toast } from 'sonner';
 import { InfoIcon, PlusIcon } from 'lucide-react';
-import PopoverInfo from './popover-info';
+import PopoverInfo from '@/components/popover-info';
+import { Slider } from '@/components/ui/slider';
 
 export default function VideoUpload() {
   const [file, setFile] = useState<File | undefined>(undefined);
@@ -55,6 +56,7 @@ export default function VideoUpload() {
 
             <CardContent className="pt-8">
               <Options splitOptions={splitChunkMap.current} />
+              <Slider defaultValue={[33]} max={100} step={1} className="mt-6 hidden" />
               <Button className="mt-8 w-full md:w-auto">Submit</Button>
             </CardContent>
 

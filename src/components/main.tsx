@@ -1,4 +1,4 @@
-import VideoUpload from './video-upload';
+import VideoUpload from '@/components/video-upload';
 
 export default function Main() {
   return (

@@ -37,7 +37,7 @@ export function isVideoValid(file: File, inputRef: RefObject<HTMLInputElement>):
 
   if (!type.includes('video')) {
     toast('Invalid file type', {
-      description: `Video file format that you uploaded is not supported.`,
+      description: `File format that you uploaded is not supported.`,
       action: {
         label: 'Try again',
         onClick: () => inputRef.current?.click(),

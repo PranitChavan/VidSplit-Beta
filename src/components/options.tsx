@@ -12,9 +12,13 @@ export default function Options(props: OptionsProps) {
     return chunk > 0;
   });
 
+  function handleChange(selectedOption: string) {
+    console.log(selectedOption);
+  }
+
   return (
     <>
-      <RadioGroup defaultValue="option-1" defaultChecked={true}>
+      <RadioGroup defaultValue="option-1" defaultChecked={true} onValueChange={(selectedOption: string) => handleChange(selectedOption)}>
         {filteredPossibleChunks.map((data, index) => {
           const [split, chunk] = data;
           const optionNum = index + 1;
