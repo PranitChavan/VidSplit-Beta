@@ -1,8 +1,9 @@
 import { LucideIcon } from 'lucide-react';
+import { ReactNode } from 'react';
 
 export type VideoFileProps = {
   videoFile: File;
-  videoDuration: number | undefined;
+  videoDuration: number;
 };
 
 export type OptionsProps = {
@@ -13,4 +14,8 @@ export type PopoverProps = {
   message: string;
   icon: LucideIcon;
   size: number;
+};
+
+export type ContainerProps = {
+  children: ReactNode;
 };

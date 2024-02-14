@@ -84,3 +84,7 @@ export function calcSplittingOptionsBasedOnVideoDuration(vidDuration: number): M
 
   return splitChunksMap;
 }
+
+export function calcSplittingOptionsForCustomDuration(vidDuration: number, splitDuration: number): number {
+  return Math.ceil(vidDuration / splitDuration);
+}

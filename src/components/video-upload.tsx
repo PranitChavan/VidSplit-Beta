@@ -1,20 +1,20 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import VideoStatusTable from '@/components/video-status-table';
 import Options from '@/components/options';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/lib/utils';
 import { toast } from 'sonner';
 import { InfoIcon, PlusIcon } from 'lucide-react';
-import PopoverInfo from '@/components/popover-info';
-import { Slider } from '@/components/ui/slider';
+import Toaster from '@/components/toaster';
+import { useVideoStore } from '@/stores/video';
 
 export default function VideoUpload() {
-  const [file, setFile] = useState<File | undefined>(undefined);
   const inputRef = useRef<HTMLInputElement>(null);
   const splitChunkMap = useRef<Map<number, number>>();
-  const videoDurationRef = useRef<number>();
+  const setVideoFile = useVideoStore((state) => state.setVideoFile);
+  const setVideoDuration = useVideoStore((state) => state.setVideoDuration);
+  const videoFile = useVideoStore((state) => state.videoFile);
 
   const handleFile = async function (e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     let videoFile: File | undefined = e.target.files?.[0];
@@ -31,38 +31,45 @@ export default function VideoUpload() {
     }
 
     if (isVideoValid(videoFile, inputRef)) {
-      const videoDuration = await getVideoDuration(videoFile);
-      videoDurationRef.current = videoDuration;
-      const chunksMap = calcSplittingOptionsBasedOnVideoDuration(videoDuration);
-      splitChunkMap.current = chunksMap;
-      setFile(videoFile);
+      try {
+        const videoDuration = await getVideoDuration(videoFile);
+        setVideoDuration(videoDuration);
+
+        const chunksMap = calcSplittingOptionsBasedOnVideoDuration(videoDuration);
+        splitChunkMap.current = chunksMap;
+      } catch (err) {
+        toast('Uh oh! Something went wrong.', {
+          description: 'Failed to determine video duration, please try again!',
+          action: {
+            label: 'Try again',
+            onClick: () => inputRef.current?.click(),
+          },
+        });
+        return;
+      }
+
+      setVideoFile(videoFile);
     }
   };
 
   return (
     <>
-      {file ? (
+      {videoFile ? (
         <>
           <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md">
             <CardHeader>
               <div className="flex flex-row gap-2 items-center">
                 <CardTitle>Options</CardTitle>
-                <PopoverInfo message="Below options are decided by the duration of the uploaded video." icon={InfoIcon} size={20} />
+                <Toaster message="Below options are decided by the duration of the uploaded video." icon={InfoIcon} size={20} />
               </div>
               <CardDescription>Select options in which you want to split your video.</CardDescription>
             </CardHeader>
 
-            <Separator />
-
             <CardContent className="pt-8">
               <Options splitOptions={splitChunkMap.current} />
-              <Slider defaultValue={[33]} max={100} step={1} className="mt-6 hidden" />
               <Button className="mt-8 w-full md:w-auto">Submit</Button>
             </CardContent>
-
-            <Separator />
           </Card>
-          {file && <VideoStatusTable videoFile={file} videoDuration={videoDurationRef.current} />}
         </>
       ) : (
         <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md">
