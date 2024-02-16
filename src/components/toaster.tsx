@@ -4,8 +4,8 @@ import { PopoverProps } from '@/types/types';
 export default function Toaster(props: PopoverProps) {
   return (
     <Popover>
-      <PopoverTrigger>{<props.icon size={props.size} />}</PopoverTrigger>
-      <PopoverContent>{props.message}</PopoverContent>
+      <PopoverTrigger className={props.className}>{<props.icon size={props.size} />}</PopoverTrigger>
+      <PopoverContent align={'start'}>{props.message}</PopoverContent>
     </Popover>
   );
 }

@@ -68,7 +68,7 @@ export default function Options(props: OptionsProps) {
       </RadioGroup>
 
       <div className={isCustomSelected ? undefined : 'hidden'}>
-        <Slider defaultValue={[videoDuration / 2]} max={videoDuration} step={1} min={1} className={`mt-6 md:w-1/2`} onValueChange={(e) => handleSliderChange(e)} />
+        <Slider defaultValue={[videoDuration / 2]} max={videoDuration} step={1} min={1} className={`mt-6 md:w-1/2`} onValueChange={(e: number[]) => handleSliderChange(e)} />
         <p className="leading-7 [&:not(:first-child)]:mt-6">{`This video will be split around ${chunkDuration} seconds slices (${chunkDuration && calcSplittingOptionsForCustomDuration(videoDuration, parseInt(chunkDuration))} splits approx)`}</p>
       </div>
     </>
