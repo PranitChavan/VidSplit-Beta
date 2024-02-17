@@ -2,13 +2,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Options from '@/components/options';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { useRef } from 'react';
-import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/lib/utils';
+import { useRef, useState } from 'react';
+import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/utils/utils';
 import { toast } from 'sonner';
 import { InfoIcon, PlusIcon, Trash2Icon, Loader2 } from 'lucide-react';
 import Toaster from '@/components/toaster';
 import { useVideoSettings, useVideoStore } from '@/stores/video';
-import { VideoStatus } from '@/types/enums';
+import { uploadVideoFileToStorage } from '@/services/videoupload.service';
 
 export default function VideoUpload() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -18,6 +18,7 @@ export default function VideoUpload() {
   const videoFile = useVideoStore((state) => state.videoFile);
   const resetVideo = useVideoStore((state) => state.reset);
   const resetVideoSettings = useVideoSettings((state) => state.reset);
+  const [isUploading, _] = useState<boolean>(false);
 
   const handleFile = async function (e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     let videoFile: File | undefined = e.target.files?.[0];
@@ -61,7 +62,10 @@ export default function VideoUpload() {
   }
 
   // temp, imporve later
-  function submitHandler() {}
+  async function submitHandler() {
+    const url = await uploadVideoFileToStorage(videoFile);
+    console.log(url);
+  }
 
   return (
     <>
@@ -81,9 +85,9 @@ export default function VideoUpload() {
 
             <CardContent className="pt-2">
               <Options splitOptions={splitChunkMap.current} />
-              <Button className="mt-8 w-full md:w-auto" onClick={submitHandler}>
-                {/* <Loader2 className="mr-2 h-4 w-4 animate-spin" /> */}
-                Submit
+              <Button className="mt-8 w-full md:w-auto" onClick={submitHandler} disabled={isUploading ? true : false}>
+                {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isUploading ? 'Uploading' : 'Submit'}
               </Button>
             </CardContent>
           </Card>

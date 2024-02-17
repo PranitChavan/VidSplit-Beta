@@ -7,7 +7,7 @@ import Container from '@/components/container';
 
 const TOASTER_DURATION = 5000; // Milli-seconds
 
-function App() {
+function Home() {
   return (
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
@@ -22,4 +22,4 @@ function App() {
   );
 }
 
-export default App;
+export default Home;

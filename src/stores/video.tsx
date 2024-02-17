@@ -20,6 +20,3 @@ export const useVideoSettings = create<VideoSplittingSettings, any>(
     reset: () => set({ chunkDuration: undefined }),
   }))
 );
-
-// TODOS
-// REMOVE DEVTOOLS

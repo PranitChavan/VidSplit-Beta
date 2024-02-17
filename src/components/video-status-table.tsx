@@ -1,5 +1,5 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { formatBytes } from '@/lib/utils';
+import { formatBytes } from '@/utils/utils';
 import { VideoFileProps } from '@/types/types';
 
 export default function VideoStatusTable(props: VideoFileProps) {

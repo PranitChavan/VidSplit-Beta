@@ -4,7 +4,7 @@ import { OptionsProps } from '@/types/types';
 import { useVideoSettings, useVideoStore } from '@/stores/video';
 import { Slider } from '@/components/ui/slider';
 import { useEffect, useState } from 'react';
-import { calcSplittingOptionsForCustomDuration } from '@/lib/utils';
+import { calcSplittingOptionsForCustomDuration } from '@/utils/utils';
 
 export default function Options(props: OptionsProps) {
   const [isCustomSelected, setIsCustomSelected] = useState<boolean>(false);
