@@ -2,12 +2,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Options from '@/components/options';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { useRef } from 'react';
-import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/lib/utils';
+import { useRef, useState } from 'react';
+import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/utils/utils';
 import { toast } from 'sonner';
-import { InfoIcon, PlusIcon } from 'lucide-react';
+import { InfoIcon, PlusIcon, Trash2Icon, Loader2 } from 'lucide-react';
 import Toaster from '@/components/toaster';
-import { useVideoStore } from '@/stores/video';
+import { useVideoSettings, useVideoStore } from '@/stores/video';
+import { uploadVideoFileToStorage } from '@/services/videoupload.service';
 
 export default function VideoUpload() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -15,6 +16,9 @@ export default function VideoUpload() {
   const setVideoFile = useVideoStore((state) => state.setVideoFile);
   const setVideoDuration = useVideoStore((state) => state.setVideoDuration);
   const videoFile = useVideoStore((state) => state.videoFile);
+  const resetVideo = useVideoStore((state) => state.reset);
+  const resetVideoSettings = useVideoSettings((state) => state.reset);
+  const [isUploading, _] = useState<boolean>(false);
 
   const handleFile = async function (e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     let videoFile: File | undefined = e.target.files?.[0];
@@ -52,27 +56,44 @@ export default function VideoUpload() {
     }
   };
 
+  function deleteHandler() {
+    resetVideo();
+    resetVideoSettings();
+  }
+
+  // temp, imporve later
+  async function submitHandler() {
+    const url = await uploadVideoFileToStorage(videoFile);
+    console.log(url);
+  }
+
   return (
     <>
       {videoFile ? (
         <>
-          <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md">
+          <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md mt-10">
             <CardHeader>
               <div className="flex flex-row gap-2 items-center">
                 <CardTitle>Options</CardTitle>
-                <Toaster message="Below options are decided by the duration of the uploaded video." icon={InfoIcon} size={20} />
+                <Toaster className="flex-1" message="Below options are decided by the duration of the uploaded video." icon={InfoIcon} size={20} />
+                <Button variant={'ghost'} onClick={deleteHandler}>
+                  <Trash2Icon size={20} />
+                </Button>
               </div>
               <CardDescription>Select options in which you want to split your video.</CardDescription>
             </CardHeader>
 
-            <CardContent className="pt-8">
+            <CardContent className="pt-2">
               <Options splitOptions={splitChunkMap.current} />
-              <Button className="mt-8 w-full md:w-auto">Submit</Button>
+              <Button className="mt-8 w-full md:w-auto" onClick={submitHandler} disabled={isUploading ? true : false}>
+                {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+                {isUploading ? 'Uploading' : 'Submit'}
+              </Button>
             </CardContent>
           </Card>
         </>
       ) : (
-        <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md">
+        <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md mt-10">
           <CardHeader>
             <CardTitle>Upload your video</CardTitle>
             <CardDescription>Click the button below to select your video file</CardDescription>

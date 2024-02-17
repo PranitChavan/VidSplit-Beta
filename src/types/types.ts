@@ -14,6 +14,7 @@ export type PopoverProps = {
   message: string;
   icon: LucideIcon;
   size: number;
+  className: string;
 };
 
 export type ContainerProps = {
