@@ -11,3 +11,10 @@ export type VideoSplittingSettings = {
   setChunkDuration: (duration: string) => void;
   reset: () => void;
 };
+
+export type VideoStorageState = {
+  uploadedVideoUrl: string | undefined;
+  setUploadedVideoUrl: (url: string) => void;
+  isTakingLongToUpload: boolean;
+  setIsTakingToLongToUpload: () => void;
+};

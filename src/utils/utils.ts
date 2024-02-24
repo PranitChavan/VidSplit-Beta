@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { toast } from 'sonner';
 import { RefObject } from 'react';
+import { StorageClient } from '@supabase/storage-js';
 
 const MAX_FILE_SIZE_LIMIT: number = 1.5e8; // In bytes (150 MB)
 
@@ -87,4 +88,15 @@ export function calcSplittingOptionsBasedOnVideoDuration(vidDuration: number): M
 
 export function calcSplittingOptionsForCustomDuration(vidDuration: number, splitDuration: number): number {
   return Math.ceil(vidDuration / splitDuration);
+}
+
+export function raiseErrorToast(errorMessage: string): void {
+  toast.error(errorMessage, {
+    position: 'bottom-center',
+  });
+}
+
+export function getUploadedVideoUrl(path: string, supabaseStorage: StorageClient): string {
+  const { data } = supabaseStorage?.from('Videos').getPublicUrl(path);
+  return data.publicUrl;
 }
