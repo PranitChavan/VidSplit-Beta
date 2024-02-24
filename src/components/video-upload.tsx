@@ -2,23 +2,21 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import Options from '@/components/options';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/utils/utils';
 import { toast } from 'sonner';
-import { InfoIcon, PlusIcon, Trash2Icon, Loader2 } from 'lucide-react';
+import { InfoIcon, PlusIcon, Trash2Icon, Loader2, AlertTriangle } from 'lucide-react';
 import Toaster from '@/components/toaster';
-import { useVideoSettings, useVideoStore } from '@/stores/video';
-import { uploadVideoFileToStorage } from '@/services/videoupload.service';
+import { useVideoSettings, useVideoStorageState, useVideoStore } from '@/stores/video';
+import { useUploadVideo } from '@/hooks/server/upload-video';
 
 export default function VideoUpload() {
   const inputRef = useRef<HTMLInputElement>(null);
   const splitChunkMap = useRef<Map<number, number>>();
-  const setVideoFile = useVideoStore((state) => state.setVideoFile);
-  const setVideoDuration = useVideoStore((state) => state.setVideoDuration);
-  const videoFile = useVideoStore((state) => state.videoFile);
-  const resetVideo = useVideoStore((state) => state.reset);
+  const { videoFile, setVideoFile, setVideoDuration, reset } = useVideoStore();
   const resetVideoSettings = useVideoSettings((state) => state.reset);
-  const [isUploading, _] = useState<boolean>(false);
+  const { setUploadedVideoUrl, isTakingLongToUpload } = useVideoStorageState();
+  const { mutateAsync: uploadVideo, status: uploadingVideoStatus, isError: uploadingVideoFailed } = useUploadVideo();
 
   const handleFile = async function (e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     let videoFile: File | undefined = e.target.files?.[0];
@@ -57,14 +55,13 @@ export default function VideoUpload() {
   };
 
   function deleteHandler() {
-    resetVideo();
+    reset();
     resetVideoSettings();
   }
 
-  // temp, imporve later
-  async function submitHandler() {
-    const url = await uploadVideoFileToStorage(videoFile);
-    console.log(url);
+  async function fileUploadHandler() {
+    const url = await uploadVideo(videoFile!);
+    setUploadedVideoUrl(url);
   }
 
   return (
@@ -85,10 +82,14 @@ export default function VideoUpload() {
 
             <CardContent className="pt-2">
               <Options splitOptions={splitChunkMap.current} />
-              <Button className="mt-8 w-full md:w-auto" onClick={submitHandler} disabled={isUploading ? true : false}>
-                {isUploading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-                {isUploading ? 'Uploading' : 'Submit'}
+              <Button className="mt-8 w-full md:w-auto" onClick={fileUploadHandler} disabled={uploadingVideoStatus === 'pending'}>
+                <Loader2 className={`mr-2 h-4 w-4 animate-spin ${uploadingVideoStatus !== 'pending' && 'hidden'}`} />
+                Submit
               </Button>
+              <span className={`flex mt-5 gap-2 h-full items-center ${isTakingLongToUpload && uploadingVideoStatus === 'pending' ? '' : 'hidden'}`}>
+                <AlertTriangle />
+                <p className="leading-7 text-muted-foreground">Video is taking too long to upload, you can refresh the page and try again!</p>
+              </span>
             </CardContent>
           </Card>
         </>
