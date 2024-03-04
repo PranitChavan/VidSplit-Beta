@@ -1,15 +1,16 @@
 import { useMutation } from '@tanstack/react-query';
 import { uploadVideoFileToStorage } from '@/services/videoupload.service';
 import { raiseErrorToast } from '@/utils/utils';
-import { useVideoStorageState } from '@/stores/video';
+import { useVideoSettings, useVideoStorageState } from '@/stores/video';
 
-const INFORM_USER_TO_REFRESH_TIME = 2000; // Milliseconds after user is informed to refresh the page
+const INFORM_USER_TO_REFRESH_TIME = 10000; // Milliseconds after user is informed to refresh the page
 
-export function useUploadVideo() {
-  const { setIsTakingToLongToUpload } = useVideoStorageState();
+export function useUploadVideoAndTriggerSplittingProcess() {
+  const setIsTakingToLongToUpload = useVideoStorageState((state) => state.setIsTakingToLongToUpload);
+  const sessionId = useVideoSettings((state) => state.sessionId);
 
   return useMutation({
-    mutationFn: (videoFile: File) => uploadVideoFileToStorage(videoFile),
+    mutationFn: (videoFile: File) => uploadVideoFileToStorage(videoFile, sessionId!),
     onMutate: () => {
       const informUser = setTimeout(() => {
         setIsTakingToLongToUpload();
@@ -19,7 +20,7 @@ export function useUploadVideo() {
     },
 
     onError: () => {
-      raiseErrorToast('Failed to upload video, please try again!');
+      raiseErrorToast('Failed to upload video, please try again!', true);
     },
 
     onSettled: (_, __, ___, context) => {

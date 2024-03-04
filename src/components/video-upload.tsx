@@ -3,32 +3,33 @@ import Options from '@/components/options';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 import { useRef } from 'react';
-import { isVideoValid, getVideoDuration, calcSplittingOptionsBasedOnVideoDuration } from '@/utils/utils';
-import { toast } from 'sonner';
+import { getVideoDuration, calcSplittingOptionsBasedOnVideoDuration, isVideoValid } from '@/utils/video';
+import { raiseErrorToast } from '@/utils/utils';
 import { InfoIcon, PlusIcon, Trash2Icon, Loader2, AlertTriangle } from 'lucide-react';
 import Toaster from '@/components/toaster';
 import { useVideoSettings, useVideoStorageState, useVideoStore } from '@/stores/video';
-import { useUploadVideo } from '@/hooks/server/upload-video';
+import { useUploadVideoAndTriggerSplittingProcess } from '@/hooks/upload-video';
+import useSplitVideo from '@/hooks/split-video';
 
 export default function VideoUpload() {
   const inputRef = useRef<HTMLInputElement>(null);
   const splitChunkMap = useRef<Map<number, number>>();
-  const { videoFile, setVideoFile, setVideoDuration, reset } = useVideoStore();
+  const videoFile = useVideoStore((state) => state.videoFile);
+  const setVideoFile = useVideoStore((state) => state.setVideoFile);
+  const setVideoDuration = useVideoStore((state) => state.setVideoDuration);
+  const resetVideoStore = useVideoStore((state) => state.reset);
   const resetVideoSettings = useVideoSettings((state) => state.reset);
-  const { setUploadedVideoUrl, isTakingLongToUpload } = useVideoStorageState();
-  const { mutateAsync: uploadVideo, status: uploadingVideoStatus, isError: uploadingVideoFailed } = useUploadVideo();
+  const setSessionId = useVideoSettings((state) => state.setSessionId);
+  const setUploadedVideoUrl = useVideoStorageState((state) => state.setUploadedVideoUrl);
+  const isTakingLongToUpload = useVideoStorageState((state) => state.isTakingLongToUpload);
+  const { mutateAsync: uploadVideo, status: uploadingVideoStatus } = useUploadVideoAndTriggerSplittingProcess();
+  const { mutateAsync: splitVideo, status: videoSplittingStatus } = useSplitVideo();
 
   const handleFile = async function (e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     let videoFile: File | undefined = e.target.files?.[0];
 
     if (!videoFile) {
-      toast('Uh oh! Something went wrong.', {
-        description: 'Failed to upload your video please try again!',
-        action: {
-          label: 'Try again',
-          onClick: () => inputRef.current?.click(),
-        },
-      });
+      raiseErrorToast('Failed to upload your video please try again!', false, 'Uh oh! Something went wrong.', { label: 'Try again', inputRef: inputRef });
       return;
     }
 
@@ -40,28 +41,26 @@ export default function VideoUpload() {
         const chunksMap = calcSplittingOptionsBasedOnVideoDuration(videoDuration);
         splitChunkMap.current = chunksMap;
       } catch (err) {
-        toast('Uh oh! Something went wrong.', {
-          description: 'Failed to determine video duration, please try again!',
-          action: {
-            label: 'Try again',
-            onClick: () => inputRef.current?.click(),
-          },
-        });
+        raiseErrorToast('Failed to determine video duration, please try again!', false, 'Uh oh! Something went wrong.', { label: 'Try again', inputRef: inputRef });
         return;
       }
-
       setVideoFile(videoFile);
     }
   };
 
   function deleteHandler() {
-    reset();
+    resetVideoStore();
     resetVideoSettings();
   }
 
   async function fileUploadHandler() {
+    const sessionId = crypto.randomUUID();
+    setSessionId(sessionId);
+
     const url = await uploadVideo(videoFile!);
     setUploadedVideoUrl(url);
+
+    await splitVideo(url);
   }
 
   return (
@@ -82,9 +81,11 @@ export default function VideoUpload() {
 
             <CardContent className="pt-2">
               <Options splitOptions={splitChunkMap.current} />
-              <Button className="mt-8 w-full md:w-auto" onClick={fileUploadHandler} disabled={uploadingVideoStatus === 'pending'}>
-                <Loader2 className={`mr-2 h-4 w-4 animate-spin ${uploadingVideoStatus !== 'pending' && 'hidden'}`} />
-                Submit
+              <Button className="mt-8 w-full md:w-auto" onClick={fileUploadHandler} disabled={uploadingVideoStatus === 'pending' || videoSplittingStatus === 'pending' ? true : false}>
+                <Loader2 className={`mr-2 h-4 w-4 animate-spin ${uploadingVideoStatus !== 'pending' && videoSplittingStatus !== 'pending' && 'hidden'}`} />
+                {(uploadingVideoStatus === 'idle' && videoSplittingStatus === 'idle') || (uploadingVideoStatus === 'success' && videoSplittingStatus === 'success') || uploadingVideoStatus === 'error' || videoSplittingStatus === 'error' ? 'Submit' : ''}
+                {uploadingVideoStatus === 'pending' && 'Uploading'}
+                {videoSplittingStatus === 'pending' && 'Processing'}
               </Button>
               <span className={`flex mt-5 gap-2 h-full items-center ${isTakingLongToUpload && uploadingVideoStatus === 'pending' ? '' : 'hidden'}`}>
                 <AlertTriangle />

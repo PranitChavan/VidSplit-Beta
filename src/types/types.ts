@@ -20,3 +20,9 @@ export type PopoverProps = {
 export type ContainerProps = {
   children: ReactNode;
 };
+
+export type SplitRequestParms = {
+  videoUrl: string;
+  chunkDuration: string;
+  sessionId?: string;
+};
