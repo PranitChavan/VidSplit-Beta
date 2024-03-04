@@ -9,6 +9,8 @@ export type VideoFileState = {
 export type VideoSplittingSettings = {
   chunkDuration: string | undefined;
   setChunkDuration: (duration: string) => void;
+  sessionId: string | undefined;
+  setSessionId: (id: string) => void;
   reset: () => void;
 };
 

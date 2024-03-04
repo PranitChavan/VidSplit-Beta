@@ -15,8 +15,10 @@ export const useVideoStore = create<VideoFileState, any>(
 export const useVideoSettings = create<VideoSplittingSettings, any>(
   devtools((set) => ({
     chunkDuration: undefined,
+    sessionId: undefined,
     setChunkDuration: (duration: string) => set({ chunkDuration: duration }),
-    reset: () => set({ chunkDuration: undefined }),
+    setSessionId: (id: string) => set({ sessionId: id }),
+    reset: () => set({ chunkDuration: undefined, sessionId: undefined }),
   }))
 );
 
@@ -24,6 +26,7 @@ export const useVideoStorageState = create<VideoStorageState, any>(
   devtools((set) => ({
     uploadedVideoUrl: undefined,
     isTakingLongToUpload: false,
+    sessionId: undefined,
     setUploadedVideoUrl: (url: string) => set({ uploadedVideoUrl: url }),
     setIsTakingToLongToUpload: () => set((state) => ({ isTakingLongToUpload: !state.isTakingLongToUpload })),
   }))
