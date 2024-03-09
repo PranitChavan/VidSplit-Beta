@@ -14,10 +14,9 @@ function Home() {
     <>
       <ThemeProvider defaultTheme="dark" storageKey="vite-ui-theme">
         <Navbar />
-        {!chunkUrls.length && <Main />}
+        {chunkUrls.length <= 0 && <Main />}
 
-        {/* <Container>{chunkUrls.length > 0 && <VideoPreview />}</Container> */}
-        <Container>{<VideoPreview />}</Container>
+        <Container>{chunkUrls.length > 0 && <VideoPreview />}</Container>
         <Toaster richColors={true} duration={TOASTER_DURATION} className="text-xl" toastOptions={{ className: 'text-xl' }} />
       </ThemeProvider>
     </>

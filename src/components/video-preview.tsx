@@ -5,8 +5,6 @@ import { useVideoStorageState } from '@/stores/video';
 export default function VideoPreview() {
   const chunkUrls = useVideoStorageState((state) => state.chunkUrls);
 
-  console.log(chunkUrls);
-
   return (
     <>
       <div className="flex flex-col md:flex-row md:gap-5 flex-wrap justify-center">
