@@ -36,7 +36,7 @@ export function isVideoValid(file: File, inputRef: RefObject<HTMLInputElement>):
 
 export function getVideoDuration(videoFile: File): Promise<number> {
   return new Promise((resolve, reject) => {
-    const videoElement = document.createElement('video');
+    const videoElement: HTMLVideoElement = document.createElement('video');
 
     videoElement.preload = 'metadata';
     videoElement.src = URL.createObjectURL(videoFile);
@@ -73,7 +73,9 @@ export function calcSplittingOptionsForCustomDuration(vidDuration: number, split
   return Math.ceil(vidDuration / splitDuration);
 }
 
-export function getUploadedVideoUrl(path: string, supabaseStorage: StorageClient): string {
-  const { data } = supabaseStorage?.from('Videos').getPublicUrl(path);
+export function getUploadedVideoUrl(path: string, supabaseStorage: StorageClient, asDownload: boolean = false): string {
+  const { data } = supabaseStorage?.from('Videos').getPublicUrl(path, {
+    download: asDownload,
+  });
   return data.publicUrl;
 }

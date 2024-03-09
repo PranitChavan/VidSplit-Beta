@@ -1,11 +1,6 @@
 import { LucideIcon } from 'lucide-react';
 import { ReactNode } from 'react';
 
-export type VideoFileProps = {
-  videoFile: File;
-  videoDuration: number;
-};
-
 export type OptionsProps = {
   splitOptions: Map<number, number> | undefined;
 };
@@ -25,4 +20,12 @@ export type SplitRequestParms = {
   videoUrl: string;
   chunkDuration: string;
   sessionId?: string;
+};
+
+type MutationProcessState = 'error' | 'idle' | 'pending' | 'success';
+
+export type RenderButtonTextProps = {
+  uploadingVideoStatus: MutationProcessState;
+  videoSplittingStatus: MutationProcessState;
+  chunksUrlsGetStatus: MutationProcessState;
 };

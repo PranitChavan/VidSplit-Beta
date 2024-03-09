@@ -1,12 +1,8 @@
 import VideoUpload from '@/components/video-upload';
 import Container from './container';
 import VideoStatusTable from './video-status-table';
-import { useVideoStore } from '@/stores/video';
 
 export default function Main() {
-  const videoFile = useVideoStore((state) => state.videoFile);
-  const videoDuration = useVideoStore((state) => state.videoDuration);
-
   return (
     <>
       <header>
@@ -16,7 +12,7 @@ export default function Main() {
       <main>
         <Container>
           <VideoUpload />
-          {videoFile && <VideoStatusTable videoDuration={videoDuration} videoFile={videoFile} />}
+          <VideoStatusTable />
         </Container>
       </main>
     </>

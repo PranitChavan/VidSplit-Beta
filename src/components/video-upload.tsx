@@ -10,6 +10,8 @@ import Toaster from '@/components/toaster';
 import { useVideoSettings, useVideoStorageState, useVideoStore } from '@/stores/video';
 import { useUploadVideoAndTriggerSplittingProcess } from '@/hooks/upload-video';
 import useSplitVideo from '@/hooks/split-video';
+import useGetVideoChunksUrlFromStorage from '@/hooks/get-video-chunks';
+import { RenderButtonTextProps } from '@/types/types';
 
 export default function VideoUpload() {
   const inputRef = useRef<HTMLInputElement>(null);
@@ -22,8 +24,10 @@ export default function VideoUpload() {
   const setSessionId = useVideoSettings((state) => state.setSessionId);
   const setUploadedVideoUrl = useVideoStorageState((state) => state.setUploadedVideoUrl);
   const isTakingLongToUpload = useVideoStorageState((state) => state.isTakingLongToUpload);
+  const setChunkUrls = useVideoStorageState((state) => state.setChunkUrls);
   const { mutateAsync: uploadVideo, status: uploadingVideoStatus } = useUploadVideoAndTriggerSplittingProcess();
   const { mutateAsync: splitVideo, status: videoSplittingStatus } = useSplitVideo();
+  const { mutateAsync: getVideoChunksUrlsFromStorage, status: chunksUrlsGetStatus } = useGetVideoChunksUrlFromStorage();
 
   const handleFile = async function (e: React.ChangeEvent<HTMLInputElement>): Promise<void> {
     let videoFile: File | undefined = e.target.files?.[0];
@@ -53,14 +57,18 @@ export default function VideoUpload() {
     resetVideoSettings();
   }
 
-  async function fileUploadHandler() {
+  async function triggerVideoUploadSplitProcess() {
     const sessionId = crypto.randomUUID();
     setSessionId(sessionId);
 
-    const url = await uploadVideo(videoFile!);
-    setUploadedVideoUrl(url);
+    const uploadedVideoUrl = await uploadVideo(videoFile!);
+    setUploadedVideoUrl(uploadedVideoUrl);
 
-    await splitVideo(url);
+    await splitVideo(uploadedVideoUrl);
+
+    const chunksUrls = await getVideoChunksUrlsFromStorage(sessionId);
+
+    setChunkUrls(chunksUrls);
   }
 
   return (
@@ -81,11 +89,9 @@ export default function VideoUpload() {
 
             <CardContent className="pt-2">
               <Options splitOptions={splitChunkMap.current} />
-              <Button className="mt-8 w-full md:w-auto" onClick={fileUploadHandler} disabled={uploadingVideoStatus === 'pending' || videoSplittingStatus === 'pending' ? true : false}>
+              <Button className="mt-8 w-full md:w-auto" onClick={triggerVideoUploadSplitProcess} disabled={uploadingVideoStatus === 'pending' || videoSplittingStatus === 'pending' ? true : false}>
                 <Loader2 className={`mr-2 h-4 w-4 animate-spin ${uploadingVideoStatus !== 'pending' && videoSplittingStatus !== 'pending' && 'hidden'}`} />
-                {(uploadingVideoStatus === 'idle' && videoSplittingStatus === 'idle') || (uploadingVideoStatus === 'success' && videoSplittingStatus === 'success') || uploadingVideoStatus === 'error' || videoSplittingStatus === 'error' ? 'Submit' : ''}
-                {uploadingVideoStatus === 'pending' && 'Uploading'}
-                {videoSplittingStatus === 'pending' && 'Processing'}
+                {renderButtonText({ uploadingVideoStatus, videoSplittingStatus, chunksUrlsGetStatus })}
               </Button>
               <span className={`flex mt-5 gap-2 h-full items-center ${isTakingLongToUpload && uploadingVideoStatus === 'pending' ? '' : 'hidden'}`}>
                 <AlertTriangle />
@@ -114,4 +120,20 @@ export default function VideoUpload() {
       )}
     </>
   );
+}
+
+function renderButtonText({ uploadingVideoStatus, videoSplittingStatus, chunksUrlsGetStatus }: RenderButtonTextProps): string {
+  if ((uploadingVideoStatus === 'idle' && videoSplittingStatus === 'idle' && chunksUrlsGetStatus === 'idle') || (uploadingVideoStatus === 'success' && videoSplittingStatus === 'success' && chunksUrlsGetStatus === 'success') || uploadingVideoStatus === 'error' || videoSplittingStatus === 'error' || chunksUrlsGetStatus === 'error') {
+    return 'Submit';
+  }
+
+  if (uploadingVideoStatus === 'pending') {
+    return 'Uploading';
+  }
+
+  if (videoSplittingStatus === 'pending' || chunksUrlsGetStatus === 'pending') {
+    return 'Processing';
+  }
+
+  return '';
 }

@@ -27,7 +27,9 @@ export const useVideoStorageState = create<VideoStorageState, any>(
     uploadedVideoUrl: undefined,
     isTakingLongToUpload: false,
     sessionId: undefined,
+    chunkUrls: [],
     setUploadedVideoUrl: (url: string) => set({ uploadedVideoUrl: url }),
     setIsTakingToLongToUpload: () => set((state) => ({ isTakingLongToUpload: !state.isTakingLongToUpload })),
+    setChunkUrls: (urls: string[]) => set({ chunkUrls: urls }),
   }))
 );

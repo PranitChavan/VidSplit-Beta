@@ -19,4 +19,6 @@ export type VideoStorageState = {
   setUploadedVideoUrl: (url: string) => void;
   isTakingLongToUpload: boolean;
   setIsTakingToLongToUpload: () => void;
+  chunkUrls: string[];
+  setChunkUrls: (urls: string[]) => void;
 };
