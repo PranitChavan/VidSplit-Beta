@@ -74,7 +74,7 @@ export function calcSplittingOptionsForCustomDuration(vidDuration: number, split
 }
 
 export function getUploadedVideoUrl(path: string, supabaseStorage: StorageClient, asDownload: boolean = false): string {
-  const { data } = supabaseStorage?.from('Videos').getPublicUrl(path, {
+  const { data } = supabaseStorage?.from(import.meta.env.VITE_STORAGE_BUCKET_ID).getPublicUrl(path, {
     download: asDownload,
   });
   return data.publicUrl;

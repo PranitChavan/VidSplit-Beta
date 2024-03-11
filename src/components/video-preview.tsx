@@ -21,7 +21,7 @@ export default function VideoPreview() {
                 </div>
               </CardContent>
               <CardFooter className="flex justify-between">
-                <a href={url} download>
+                <a href={url} download className="w-full">
                   <Button className="w-full">Download</Button>
                 </a>
               </CardFooter>
