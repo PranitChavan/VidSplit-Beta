@@ -49,6 +49,8 @@ export default function VideoUpload() {
         return;
       }
       setVideoFile(videoFile);
+    } else {
+      e.target.value = '';
     }
   };
 
