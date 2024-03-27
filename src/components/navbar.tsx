@@ -9,8 +9,8 @@ export default function Navbar() {
   return (
     <nav>
       <div className="flex items-center justify-between p-5">
-        <h1 className="scroll-m-20 text-4xl font-extrabold tracking-tight lg:text-5xl text-center sm:text-start cursor-pointer" onClick={refreshPage}>
-          VidSplit
+        <h1 className="scroll-m-20 text-3xl font-extrabold tracking-tight lg:text-5xl text-center sm:text-start cursor-pointer" onClick={refreshPage}>
+          VidSplitter
         </h1>
         <ModeToggle />
       </div>
