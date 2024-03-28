@@ -34,15 +34,21 @@ export function isVideoValid(file: File, inputRef: RefObject<HTMLInputElement>):
   return true;
 }
 
-export function getVideoDuration(videoFile: File): Promise<number> {
+export function getVideoDuration(videoSource: File | string): Promise<number> {
   return new Promise((resolve, reject) => {
     const videoElement: HTMLVideoElement = document.createElement('video');
-
     videoElement.preload = 'metadata';
-    videoElement.src = URL.createObjectURL(videoFile);
+
+    if (typeof videoSource === 'string') {
+      videoElement.src = videoSource;
+    } else {
+      videoElement.src = URL.createObjectURL(videoSource);
+    }
 
     videoElement.onloadedmetadata = () => {
-      URL.revokeObjectURL(videoElement.src);
+      if (typeof videoSource === 'object') {
+        URL.revokeObjectURL(videoElement.src);
+      }
       resolve(Math.floor(videoElement.duration));
     };
 
