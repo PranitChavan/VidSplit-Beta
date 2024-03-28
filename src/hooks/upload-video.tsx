@@ -3,7 +3,7 @@ import { uploadVideoFileToStorage } from '@/services/video.service';
 import { raiseErrorToast } from '@/utils/utils';
 import { useVideoSettings, useVideoStorageState } from '@/stores/video';
 
-const INFORM_USER_TO_REFRESH_TIME = 20000; // Milliseconds after user is informed to refresh the page
+const INFORM_USER_TO_REFRESH_TIME = 180000; // Milliseconds after user is informed to refresh the page
 
 export function useUploadVideoAndTriggerSplittingProcess() {
   const setIsTakingToLongToUpload = useVideoStorageState((state) => state.setIsTakingToLongToUpload);
