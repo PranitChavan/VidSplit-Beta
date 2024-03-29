@@ -19,7 +19,7 @@ export type ContainerProps = {
 export type SplitRequestParms = {
   videoUrl: string;
   chunkDuration: string;
-  sessionId?: string;
+  sessionId: string;
 };
 
 type MutationProcessState = 'error' | 'idle' | 'pending' | 'success';

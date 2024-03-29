@@ -21,6 +21,7 @@ export async function uploadVideoFileToStorage(video: File | undefined, sessionI
 }
 
 export async function splitVideo(videoParams: SplitRequestParms) {
+  alert('Split Video Called!!');
   const { videoUrl, chunkDuration, sessionId } = videoParams;
 
   try {
