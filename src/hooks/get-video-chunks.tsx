@@ -13,6 +13,6 @@ export default function useGetVideoChunksUrlFromStorage() {
     onSuccess: () => {
       toast.success('Video splitting successful! Please download the chunks using the download button.');
     },
-    retry: 1,
+    retry: 0,
   });
 }

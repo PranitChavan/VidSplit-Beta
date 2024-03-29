@@ -9,8 +9,9 @@ export default function useSplitVideo() {
 
   return useMutation({
     mutationFn: (uploadedVideoUrl: string) => splitVideo({ videoUrl: uploadedVideoUrl, chunkDuration: chunkDuration!, sessionId: sessionId! }),
-    retry: 1,
-    onError: () => {
+    retry: 0,
+    onError: (error) => {
+      alert(`Split Video Error : ${error.message}`);
       raiseErrorToast('Failed to split your video, please try again!', true);
     },
   });

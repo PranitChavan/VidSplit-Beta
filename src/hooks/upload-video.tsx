@@ -28,6 +28,6 @@ export function useUploadVideoAndTriggerSplittingProcess() {
       clearTimeout(context);
     },
 
-    retry: 1,
+    retry: 0,
   });
 }
