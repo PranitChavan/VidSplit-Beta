@@ -1,7 +1,7 @@
 export type VideoFileState = {
-  videoFile: File | undefined;
+  video: File | string | undefined;
   videoDuration: number;
-  setVideoFile: (videoFile: File | undefined) => void;
+  setVideo: (videoFile: File | string | undefined) => void;
   setVideoDuration: (duration: number) => void;
   reset: () => void;
 };
@@ -11,6 +11,8 @@ export type VideoSplittingSettings = {
   setChunkDuration: (duration: string) => void;
   sessionId: string | undefined;
   setSessionId: (id: string) => void;
+  chunksMap: Map<number, number> | undefined;
+  setChunksMap: (chunksMap: Map<number, number>) => void;
   reset: () => void;
 };
 

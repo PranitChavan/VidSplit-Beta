@@ -4,11 +4,11 @@ import { devtools } from 'zustand/middleware';
 
 export const useVideoStore = create<VideoFileState, any>(
   devtools((set) => ({
-    videoFile: undefined,
+    video: undefined,
     videoDuration: -1,
-    setVideoFile: (videoFile: File | undefined) => set({ videoFile: videoFile }),
+    setVideo: (video: File | string | undefined) => set({ video: video }),
     setVideoDuration: (duration: number) => set({ videoDuration: duration }),
-    reset: () => set({ videoFile: undefined, videoDuration: -1 }),
+    reset: () => set({ video: undefined, videoDuration: -1 }),
   }))
 );
 
@@ -18,7 +18,9 @@ export const useVideoSettings = create<VideoSplittingSettings, any>(
     sessionId: undefined,
     setChunkDuration: (duration: string) => set({ chunkDuration: duration }),
     setSessionId: (id: string) => set({ sessionId: id }),
-    reset: () => set({ chunkDuration: undefined, sessionId: undefined }),
+    chunksMap: undefined,
+    setChunksMap: (chunksMap: Map<number, number>) => set({ chunksMap: chunksMap }),
+    reset: () => set({ chunkDuration: undefined, sessionId: undefined, chunksMap: undefined }),
   }))
 );
 

@@ -1,6 +1,7 @@
 import VideoUpload from '@/components/video-upload';
 import Container from './container';
 import VideoStatusTable from './video-status-table';
+import AddVideoUrl from './add-video-url';
 
 export default function Main() {
   return (
@@ -13,6 +14,7 @@ export default function Main() {
         <Container>
           <VideoUpload />
           <VideoStatusTable />
+          <AddVideoUrl />
         </Container>
       </main>
     </>
