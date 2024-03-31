@@ -1,5 +1,6 @@
 import { LucideIcon } from 'lucide-react';
 import { ReactNode } from 'react';
+import { MouseEventHandler } from 'react';
 
 export type OptionsProps = {
   splitOptions: Map<number, number> | undefined;
@@ -28,4 +29,12 @@ export type RenderButtonTextProps = {
   uploadingVideoStatus: MutationProcessState;
   videoSplittingStatus: MutationProcessState;
   chunksUrlsGetStatus: MutationProcessState;
+};
+
+export type VideoUploadCardPostUploadProps = {
+  triggerVideoUploadSplitProcess: MouseEventHandler<HTMLButtonElement>;
+  uploadingVideoStatus: MutationProcessState;
+  videoSplittingStatus: MutationProcessState;
+  chunksUrlsGetStatus: MutationProcessState;
+  isTakingLongToUpload: boolean;
 };

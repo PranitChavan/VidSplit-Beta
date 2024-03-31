@@ -49,6 +49,7 @@ export function getVideoDuration(videoSource: File | string): Promise<number> {
       if (typeof videoSource === 'object') {
         URL.revokeObjectURL(videoElement.src);
       }
+
       resolve(Math.floor(videoElement.duration));
     };
 

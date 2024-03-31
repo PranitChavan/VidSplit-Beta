@@ -2,6 +2,7 @@ import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 import { toast } from 'sonner';
 import { RefObject } from 'react';
+import { RenderButtonTextProps } from '@/types/types';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
@@ -34,4 +35,20 @@ export function formatBytes(bytes: number, decimals: number = 2): string {
   const i = Math.floor(Math.log(bytes) / Math.log(k));
 
   return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
+}
+
+export function renderButtonText({ uploadingVideoStatus, videoSplittingStatus, chunksUrlsGetStatus }: RenderButtonTextProps): string {
+  if ((uploadingVideoStatus === 'idle' && videoSplittingStatus === 'idle' && chunksUrlsGetStatus === 'idle') || (uploadingVideoStatus === 'success' && videoSplittingStatus === 'success' && chunksUrlsGetStatus === 'success') || uploadingVideoStatus === 'error' || videoSplittingStatus === 'error' || chunksUrlsGetStatus === 'error') {
+    return 'Submit';
+  }
+
+  if (uploadingVideoStatus === 'pending') {
+    return 'Uploading';
+  }
+
+  if (videoSplittingStatus === 'pending' || chunksUrlsGetStatus === 'pending') {
+    return 'Processing';
+  }
+
+  return '';
 }

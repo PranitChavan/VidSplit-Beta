@@ -3,12 +3,12 @@ import { formatBytes } from '@/utils/utils';
 import { useVideoStore } from '@/stores/video';
 
 export default function VideoStatusTable() {
-  const videoFile = useVideoStore((state) => state.videoFile);
+  const videoFile = useVideoStore((state) => state.video);
   const videoDuration = useVideoStore((state) => state.videoDuration);
 
   return (
     <>
-      {videoFile && (
+      {videoFile instanceof File && (
         <Table className="mt-3">
           <TableHeader className="bg-muted">
             <TableRow>

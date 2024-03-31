@@ -51,6 +51,10 @@ export async function splitVideo(videoParams: SplitRequestParms) {
 }
 
 export async function getVideoChunksUrlFromStorage(sessionId: string, asDownload = false): Promise<string[]> {
+  const supabaseModule = await import('@/supabase/supabase');
+  const { storage } = supabaseModule.default;
+  supabaseStorageClient = storage;
+
   const { data, error } = await supabaseStorageClient.from(import.meta.env.VITE_STORAGE_BUCKET_ID).list(`${sessionId}/Chunks`);
 
   if (error) throw new Error('Failed to get chunks path from storage');
