@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Options from '@/components/options';
 import { Button } from '@/components/ui/button';
-import { InfoIcon, Trash2Icon, Loader2, AlertTriangle } from 'lucide-react';
+import { InfoIcon, Trash2Icon, Loader2, AlertTriangle, Info } from 'lucide-react';
 import Toaster from '@/components/toaster';
 import { useVideoSettings, useVideoStore } from '@/stores/video';
 import { renderButtonText } from '@/utils/utils';
@@ -39,6 +39,9 @@ export default function VideoSplittingOptionsCard(props: VideoUploadCardPostUplo
             <Loader2 className={`mr-2 h-4 w-4 animate-spin ${uploadingVideoStatus !== 'pending' && videoSplittingStatus !== 'pending' && 'hidden'}`} />
             {renderButtonText({ uploadingVideoStatus, videoSplittingStatus, chunksUrlsGetStatus })}
           </Button>
+
+          <p className={`leading-5 text-sm md:text-sm text-yellow-500 mt-5 ${videoSplittingStatus === 'pending' ? '' : 'hidden'}`}>Video splitting is in progress; it may take some time. You can switch tabs or minimize and come back later.</p>
+
           <span className={`flex mt-5 gap-2 h-full items-center ${isTakingLongToUpload && uploadingVideoStatus === 'pending' ? '' : 'hidden'}`}>
             <AlertTriangle />
             <p className="leading-7 text-muted-foreground">Video is taking too long to upload, you can refresh the page and try again!</p>
