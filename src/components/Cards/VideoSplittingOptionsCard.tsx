@@ -1,7 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import Options from '@/components/options';
 import { Button } from '@/components/ui/button';
-import { InfoIcon, Trash2Icon, Loader2, AlertTriangle, Info } from 'lucide-react';
+import { InfoIcon, Trash2Icon, Loader2, AlertTriangle } from 'lucide-react';
 import Toaster from '@/components/toaster';
 import { useVideoSettings, useVideoStore } from '@/stores/video';
 import { renderButtonText } from '@/utils/utils';
