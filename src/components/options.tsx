@@ -1,7 +1,7 @@
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { OptionsProps } from '@/types/types';
-import { useVideoSettings, useVideoStore } from '@/stores/video';
+import { useVideoSettings } from '@/stores/video';
 import { Slider } from '@/components/ui/slider';
 import { useEffect, useState } from 'react';
 import { calcSplittingOptionsForCustomDuration } from '@/utils/video';
@@ -9,10 +9,9 @@ import { calcSplittingOptionsForCustomDuration } from '@/utils/video';
 export default function Options(props: OptionsProps) {
   const [isCustomSelected, setIsCustomSelected] = useState<boolean>(false);
   const setChunkDuration = useVideoSettings((state) => state.setChunkDuration);
-  const videoDuration = useVideoStore((state) => state.videoDuration);
   const chunkDuration = useVideoSettings((state) => state.chunkDuration);
 
-  const { splitOptions } = props;
+  const { splitOptions, videoDuration } = props;
   const splitOptionsArray = [...(splitOptions?.entries() || [])];
 
   const filteredPossibleChunks = splitOptionsArray.filter((data) => {

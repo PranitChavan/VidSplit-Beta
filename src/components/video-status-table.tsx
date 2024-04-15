@@ -1,14 +1,17 @@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatBytes } from '@/utils/utils';
-import { useVideoStore } from '@/stores/video';
 
-export default function VideoStatusTable() {
-  const videoFile = useVideoStore((state) => state.video);
-  const videoDuration = useVideoStore((state) => state.videoDuration);
+type VideoStatusTableProps = {
+  videoDuration: number;
+  video: File | string | undefined;
+};
+
+export default function VideoStatusTable(props: VideoStatusTableProps) {
+  const { video, videoDuration } = props;
 
   return (
     <>
-      {videoFile instanceof File && (
+      {video instanceof File && (
         <Table className="mt-3">
           <TableHeader className="bg-muted">
             <TableRow>
@@ -19,8 +22,8 @@ export default function VideoStatusTable() {
           </TableHeader>
           <TableBody className="border-b-2">
             <TableRow>
-              <TableCell className="font-medium">{videoFile.name.length > 10 ? videoFile.name.slice(0, 10) + '...' : videoFile.name}</TableCell>
-              <TableCell>{formatBytes(videoFile.size)}</TableCell>
+              <TableCell className="font-medium">{video.name.length > 10 ? video.name.slice(0, 10) + '...' : video.name}</TableCell>
+              <TableCell>{formatBytes(video.size)}</TableCell>
               <TableCell>{`${videoDuration} sec`}</TableCell>
             </TableRow>
           </TableBody>

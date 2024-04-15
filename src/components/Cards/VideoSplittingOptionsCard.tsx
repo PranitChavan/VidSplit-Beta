@@ -3,25 +3,30 @@ import Options from '@/components/options';
 import { Button } from '@/components/ui/button';
 import { InfoIcon, Trash2Icon, Loader2, AlertTriangle } from 'lucide-react';
 import Toaster from '@/components/toaster';
-import { useVideoSettings, useVideoStore } from '@/stores/video';
 import { renderButtonText } from '@/utils/utils';
 import { VideoUploadCardPostUploadProps } from '@/types/types';
+import { useEffect, useState } from 'react';
+import { calcSplittingOptionsBasedOnVideoDuration } from '@/utils/video';
 
 export default function VideoSplittingOptionsCard(props: VideoUploadCardPostUploadProps) {
-  const resetVideoStore = useVideoStore((state) => state.reset);
-  const resetVideoSettings = useVideoSettings((state) => state.reset);
-  const chunksMap = useVideoSettings((state) => state.chunksMap);
+  const { triggerVideoUploadSplitProcess, uploadingVideoStatus, videoSplittingStatus, chunksUrlsGetStatus, isTakingLongToUpload, videoDuration } = props;
 
-  const { triggerVideoUploadSplitProcess, uploadingVideoStatus, videoSplittingStatus, chunksUrlsGetStatus, isTakingLongToUpload } = props;
+  const [chunks, setChunks] = useState<Map<number, number>>();
+
+  useEffect(() => {
+    if (videoDuration) {
+      const chunksMap = calcSplittingOptionsBasedOnVideoDuration(videoDuration);
+      setChunks(chunksMap);
+    }
+  }, [videoDuration]);
 
   function deleteHandler() {
-    resetVideoStore();
-    resetVideoSettings();
+    window.location.reload();
   }
 
   return (
     <>
-      <Card className="border-2 border-slate-300 border-dashed  dark:border-gray-600 shadow-md mt-10">
+      <Card className="border-2 border-slate-300 border-dashe dark:border-gray-600 shadow-md mt-10">
         <CardHeader>
           <div className="flex flex-row gap-2 items-center">
             <CardTitle>Options</CardTitle>
@@ -34,7 +39,7 @@ export default function VideoSplittingOptionsCard(props: VideoUploadCardPostUplo
         </CardHeader>
 
         <CardContent className="pt-2">
-          <Options splitOptions={chunksMap} />
+          {videoDuration && chunks && <Options splitOptions={chunks} videoDuration={videoDuration} />}
           <Button className="mt-8 w-full md:w-auto" onClick={triggerVideoUploadSplitProcess} disabled={uploadingVideoStatus === 'pending' || videoSplittingStatus === 'pending' || chunksUrlsGetStatus === 'pending' ? true : false}>
             <Loader2 className={`mr-2 h-4 w-4 animate-spin ${uploadingVideoStatus !== 'pending' && videoSplittingStatus !== 'pending' && 'hidden'}`} />
             {renderButtonText({ uploadingVideoStatus, videoSplittingStatus, chunksUrlsGetStatus })}

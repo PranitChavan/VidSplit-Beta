@@ -4,6 +4,7 @@ import { MouseEventHandler } from 'react';
 
 export type OptionsProps = {
   splitOptions: Map<number, number> | undefined;
+  videoDuration: number;
 };
 
 export type PopoverProps = {
@@ -37,4 +38,5 @@ export type VideoUploadCardPostUploadProps = {
   videoSplittingStatus: MutationProcessState;
   chunksUrlsGetStatus: MutationProcessState;
   isTakingLongToUpload: boolean;
+  videoDuration: number | undefined;
 };

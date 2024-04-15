@@ -2,8 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { PlusIcon } from 'lucide-react';
 
-export default function UploadVideoCard(props: { handleFile: Function; inputRef: React.RefObject<HTMLInputElement> }) {
-  const { handleFile, inputRef } = props;
+export default function VideoSelectCard(props: { handleFile: Function; inputRef: React.RefObject<HTMLInputElement> }) {
+  const { inputRef, handleFile } = props;
 
   return (
     <>
