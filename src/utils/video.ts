@@ -3,7 +3,7 @@ import { RefObject } from 'react';
 import { formatBytes } from './utils';
 import { StorageClient } from '@supabase/storage-js';
 
-const MAX_FILE_SIZE_LIMIT: number = 5e7; // In bytes (50 MB)
+const MAX_FILE_SIZE_LIMIT: number = 5e7; // In bytes i.e (50 MB)
 
 export function isVideoValid(file: File, inputRef: RefObject<HTMLInputElement>): boolean {
   const { size, type } = file;
