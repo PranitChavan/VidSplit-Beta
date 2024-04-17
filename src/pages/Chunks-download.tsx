@@ -2,7 +2,7 @@ import VideoPreview from '@/components/video-preview';
 import Container from '@/components/container';
 import { useVideoStorageState } from '@/stores/video';
 
-export function ChunksDownload() {
+export default function ChunksDownload() {
   const chunkUrls = useVideoStorageState((state) => state.chunkUrls);
 
   return (
