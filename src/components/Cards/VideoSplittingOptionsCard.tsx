@@ -45,7 +45,7 @@ export default function VideoSplittingOptionsCard(props: VideoUploadCardPostUplo
             {renderButtonText({ uploadingVideoStatus, videoSplittingStatus, chunksUrlsGetStatus })}
           </Button>
 
-          <p className={`leading-5 text-sm md:text-sm text-yellow-500 mt-5 ${videoSplittingStatus === 'pending' ? '' : 'hidden'}`}>Video splitting is in progress; it may take some time. You can switch tabs or minimize and come back later.</p>
+          <p className={`leading-5 text-sm md:text-sm text-yellow-500 mt-5 ${videoSplittingStatus === 'pending' ? '' : 'hidden'}`}>This may take a minute or two. You can switch tabs or minimize and come back later.</p>
 
           <span className={`flex mt-5 gap-2 h-full items-center ${isTakingLongToUpload && uploadingVideoStatus === 'pending' ? '' : 'hidden'}`}>
             <AlertTriangle />
